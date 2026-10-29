@@ -1,0 +1,6 @@
+{
+  "name": "Falooda Point POS",
+  "description": "Multi-branch POS and role-based management system with branch inventory, checkout, stock transfers, and financial reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

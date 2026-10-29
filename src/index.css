@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --cream-bg: #FFF9F0;
+    --soft-pink: #F8E7E5;
+    --primary-rose: #D98591;
+    --hover-rose: #C66F7D;
+    --dark-berry: #70445B;
+    --main-text: #493A3E;
+    --secondary-text: #79696D;
+    --border-color: #EADBD6;
+    --white-cards: #FFFFFF;
+    --input-bg: #FFFCF8;
+  }
+
+  body {
+    background-color: #FFF9F0;
+    color: #493A3E;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom dessert shop scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF9F0;
+}
+::-webkit-scrollbar-thumb {
+  background: #EADBD6;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D98591;
+}
+
+/* Thermal receipt printing styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt, #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    background: white !important;
+    color: black !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

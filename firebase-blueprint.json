@@ -1,0 +1,275 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role and granular permissions",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "staff"] },
+        "active": { "type": "boolean" },
+        "assignedBranchIds": { "type": "array" },
+        "permissions": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["email", "role", "active"]
+    },
+    "Branch": {
+      "title": "Branch",
+      "description": "Physical shop location",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "code": { "type": "string", "maxLength": 20 },
+        "address": { "type": "string", "maxLength": 250 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "managerId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "timezone": { "type": "string", "maxLength": 50 },
+        "taxRate": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "code", "status"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product category grouping",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 250 },
+        "sortOrder": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["name", "active"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Dessert or beverage product in catalog",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "sku": { "type": "string", "maxLength": 50 },
+        "globalSellingPrice": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "active": { "type": "boolean" },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "variants": { "type": "array" },
+        "addOns": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "categoryId", "globalSellingPrice", "active"]
+    },
+    "BranchProduct": {
+      "title": "BranchProduct",
+      "description": "Branch-specific stock and price override for a product",
+      "type": "object",
+      "properties": {
+        "branchId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "priceOverride": { "type": "number" },
+        "stockQuantity": { "type": "number" },
+        "lowStockAlert": { "type": "number" },
+        "stockTrackingEnabled": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["branchId", "productId", "stockQuantity", "active"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "POS sales transaction",
+      "type": "object",
+      "properties": {
+        "receiptNumber": { "type": "string", "maxLength": 50 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "branchName": { "type": "string", "maxLength": 100 },
+        "cashierId": { "type": "string", "maxLength": 128 },
+        "cashierName": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["completed", "refunded", "partially_refunded", "cancelled"] },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "taxAmount": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "card", "digital_wallet", "other"] },
+        "paymentStatus": { "type": "string", "enum": ["paid", "pending", "refunded"] },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 50 },
+        "orderNotes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["receiptNumber", "branchId", "cashierId", "status", "totalAmount", "paymentMethod"]
+    },
+    "InventoryMovement": {
+      "title": "InventoryMovement",
+      "description": "Audit record of stock addition, deduction or adjustment",
+      "type": "object",
+      "properties": {
+        "branchId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "maxLength": 100 },
+        "quantityChange": { "type": "number" },
+        "movementType": { "type": "string", "enum": ["sale", "restock", "adjustment", "transfer_out", "transfer_in", "waste", "return"] },
+        "reason": { "type": "string", "maxLength": 250 },
+        "actorId": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "relatedOrderId": { "type": "string", "maxLength": 128 },
+        "relatedTransferId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["branchId", "productId", "quantityChange", "movementType", "actorId"]
+    },
+    "StockTransfer": {
+      "title": "StockTransfer",
+      "description": "Inter-branch inventory transfer",
+      "type": "object",
+      "properties": {
+        "transferNumber": { "type": "string", "maxLength": 50 },
+        "sourceBranchId": { "type": "string", "maxLength": 128 },
+        "sourceBranchName": { "type": "string", "maxLength": 100 },
+        "destinationBranchId": { "type": "string", "maxLength": 128 },
+        "destinationBranchName": { "type": "string", "maxLength": 100 },
+        "items": { "type": "array" },
+        "status": { "type": "string", "enum": ["draft", "dispatched", "received", "cancelled"] },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdByName": { "type": "string", "maxLength": 100 },
+        "dispatchedBy": { "type": "string", "maxLength": 128 },
+        "receivedBy": { "type": "string", "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["transferNumber", "sourceBranchId", "destinationBranchId", "status", "createdBy"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Branch-specific or business-wide expense item",
+      "type": "object",
+      "properties": {
+        "branchId": { "type": "string", "maxLength": 128 },
+        "branchName": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 250 },
+        "category": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "maxLength": 50 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdByName": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["description", "category", "amount", "date", "createdBy"]
+    },
+    "Refund": {
+      "title": "Refund",
+      "description": "Refund transaction for an order",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "maxLength": 128 },
+        "receiptNumber": { "type": "string", "maxLength": 50 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "amount": { "type": "number" },
+        "reason": { "type": "string", "maxLength": 250 },
+        "refundType": { "type": "string", "enum": ["full", "partial"] },
+        "status": { "type": "string", "enum": ["approved", "pending", "rejected"] },
+        "actorId": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["orderId", "branchId", "amount", "reason", "actorId"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Append-only system activity and security audit trail",
+      "type": "object",
+      "properties": {
+        "actorId": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "actorRole": { "type": "string", "maxLength": 50 },
+        "action": { "type": "string", "maxLength": 100 },
+        "entityType": { "type": "string", "maxLength": 50 },
+        "entityId": { "type": "string", "maxLength": 128 },
+        "branchId": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string" },
+        "details": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["actorId", "action", "entityType", "timestamp"]
+    },
+    "PermissionAuditLog": {
+      "title": "PermissionAuditLog",
+      "description": "Audit record specifically tracking permission grants, revokes, and role updates",
+      "type": "object",
+      "properties": {
+        "targetUserId": { "type": "string", "maxLength": 128 },
+        "targetUserName": { "type": "string", "maxLength": 100 },
+        "targetUserEmail": { "type": "string", "maxLength": 100 },
+        "actorUserId": { "type": "string", "maxLength": 128 },
+        "actorUserName": { "type": "string", "maxLength": 100 },
+        "action": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "maxLength": 50 },
+        "permissionsChanged": { "type": "array" },
+        "timestamp": { "type": "string" },
+        "reason": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["targetUserId", "actorUserId", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles and permissions"
+    },
+    "/branches/{branchId}": {
+      "schema": { "$ref": "#/entities/Branch" },
+      "description": "Physical dessert shop branch locations"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Dessert categories"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Catalog products"
+    },
+    "/branchProducts/{branchProductId}": {
+      "schema": { "$ref": "#/entities/BranchProduct" },
+      "description": "Branch specific inventory and pricing overrides"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Sales and POS orders"
+    },
+    "/inventoryMovements/{movementId}": {
+      "schema": { "$ref": "#/entities/InventoryMovement" },
+      "description": "Inventory stock tracking history"
+    },
+    "/stockTransfers/{transferId}": {
+      "schema": { "$ref": "#/entities/StockTransfer" },
+      "description": "Stock transfers between branches"
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Operating and branch expenses"
+    },
+    "/refunds/{refundId}": {
+      "schema": { "$ref": "#/entities/Refund" },
+      "description": "Customer order refunds"
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "System event audit trail"
+    },
+    "/permissionAuditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/PermissionAuditLog" },
+      "description": "Permission changes audit trail"
+    }
+  }
+}

@@ -1,0 +1,1167 @@
+FALOODA POINT POS — COMPLETE MULTI-BRANCH POS AND ROLE-BASED MANAGEMENT SYSTEM
+1. YOUR ROLE AND PROJECT GOAL
+
+Act as a senior full-stack developer, Firebase architect, database engineer, security engineer, UI/UX designer, and software tester.
+
+Build a complete, secure, responsive web-based Point of Sale and shop-management application called Falooda Point POS.
+
+I am using Google AI Studio Build mode.
+
+Use the supported application framework and Firebase integration. Inspect the existing project before changing it.
+
+The application must support multiple physical branches, centralized business management, branch-specific operations, three user roles, and configurable permissions.
+
+This must be a functional application connected to real Firebase services, not a static dashboard or frontend-only prototype.
+
+The system must support:
+
+Multi-branch business management.
+Super Admin, Admin, and Staff roles.
+Individual permissions that can be granted and revoked.
+Firebase Authentication.
+Cloud Firestore.
+Secure user and branch management.
+POS billing and checkout.
+Product and category management.
+Branch-specific prices and inventory.
+Stock transfers between branches.
+Receipts and printing.
+Orders, refunds, and cancellations.
+Expenses.
+Sales dashboards and reports.
+Permission-controlled financial information.
+Audit logs.
+Responsive mobile and desktop interfaces.
+Free-tier-conscious hosting.
+
+Do not stop after creating a login page, dashboard, or visual prototype. Implement the application in stages and continue through the critical workflows.
+
+Preserve existing functionality and data if this is an upgrade to an existing project.
+
+2. TECHNOLOGY STACK
+
+Use technologies compatible with Google AI Studio Build mode:
+
+React and TypeScript.
+Vite if supported by the generated environment.
+Responsive CSS or Tailwind CSS.
+Firebase Authentication.
+Cloud Firestore.
+Firebase Security Rules.
+Firebase Hosting where appropriate.
+Lucide icons.
+Recharts or a compatible chart library.
+React Router or the supported routing system.
+Appropriate form validation and testing libraries.
+
+Use reusable components, typed data models, modular services, and maintainable code.
+
+Do not unnecessarily replace working project configuration.
+
+Never expose Firebase Admin credentials, service-account keys, or other private secrets in frontend code.
+
+3. BRANDING AND DESIGN
+
+Create a premium, elegant dessert-shop design using soft pink and warm cream.
+
+Use this exact palette:
+
+Cream background: #FFF9F0
+Soft pink: #F8E7E5
+Primary rose pink: #D98591
+Hover rose: #C66F7D
+Dark berry plum: #70445B
+Main text: #493A3E
+Secondary text: #79696D
+Border: #EADBD6
+White cards: #FFFFFF
+Input background: #FFFCF8
+
+Design requirements:
+
+Premium dessert-shop appearance.
+Rounded cards and inputs.
+Subtle shadows.
+Clean typography.
+Large touch-friendly buttons.
+Readable tables.
+Attractive product cards.
+Accessible color contrast.
+Consistent icons.
+Clear loading, success, empty, and error states.
+Responsive layouts.
+Minimal visual clutter.
+
+Create reusable design tokens and a consistent component system.
+
+The entire application must use this theme, including login, dashboards, POS, branch management, reports, settings, and receipt previews.
+
+Printed receipts must remain readable in black and white.
+
+4. THREE ROLES WITH CONFIGURABLE PERMISSIONS
+
+Implement exactly three primary roles:
+
+Super Admin.
+Admin.
+Staff.
+
+Use roles to establish the maximum authority of an account, then use explicit permissions to control access to individual features.
+
+A role and a permission are not the same thing.
+
+For example, an Admin may be allowed to manage products but not see sales reports. Another Admin may be allowed to view sales reports because Super Admin granted that permission.
+
+Never let a user grant themselves permissions.
+
+4.1 Super Admin
+
+Super Admin is the highest authority in the application.
+
+Super Admin must be able to:
+
+Access all authorized branches.
+View combined sales across all branches.
+View individual branch sales.
+View all permitted business-wide reports.
+Create Admin accounts.
+Create Staff accounts.
+Edit, activate, and deactivate Admin and Staff accounts.
+Assign users to branches.
+Change user roles within permitted administrative workflows.
+Grant individual permissions to Admins.
+Revoke individual permissions from Admins.
+Grant optional permissions to Staff.
+Revoke permissions from Staff.
+Configure branch access.
+Manage all branches.
+Manage products and categories.
+Manage global and branch-specific pricing.
+Manage inventory and stock transfers.
+View and manage orders and refunds.
+Manage expenses.
+Configure shop settings.
+Review audit logs.
+Review permission changes.
+View business-wide analytics.
+Configure access policies.
+
+Super Admin must be able to grant or revoke the Admin permission to view sales dashboards and sales reports independently.
+
+Super Admin must also be able to grant or revoke other Admin permissions, including:
+
+View branch sales.
+View combined sales.
+View sales reports.
+View profit and cost information.
+View expenses.
+Manage products.
+Change prices.
+Manage inventory.
+Initiate stock transfers.
+Approve stock transfers.
+Manage refunds.
+Approve refunds.
+Manage expenses.
+Export reports.
+Manage branch settings.
+Manage staff within permitted administrative scope.
+
+Super Admin may grant any supported operational permission to Admin or Staff, subject to the security boundaries defined below.
+
+Super Admin permissions must not be removable by an Admin or Staff member.
+
+Do not allow an Admin to promote themselves to Super Admin.
+
+Do not allow a user to modify their own role or grant themselves additional privileges.
+
+Prevent accidental removal or deactivation of the last active Super Admin. Require a deliberate, protected workflow for sensitive Super Admin account changes.
+
+4.2 Admin
+
+Admin is responsible for authorized shop operations.
+
+By default, an Admin can:
+
+Log in.
+Access assigned branches.
+Manage Staff accounts.
+Assign Staff to branches within the Admin's permitted scope.
+Manage products if authorized.
+Manage categories if authorized.
+Manage branch inventory if authorized.
+Manage orders within the assigned branches if authorized.
+Perform permitted POS operations.
+Manage branch-level settings if authorized.
+
+Admin must not automatically receive access to every financial feature.
+
+In particular:
+
+Sales dashboards, sales totals, combined sales, and sales reports must be controlled by explicit permissions granted by Super Admin.
+
+An Admin without sales permissions must not see or retrieve sales reports or restricted financial data.
+
+Super Admin can independently grant or revoke sales-report access without changing the user's Admin role.
+
+An Admin may create and manage Staff accounts, but cannot:
+
+Create another Admin.
+Create a Super Admin.
+Promote Staff to Admin.
+Grant themselves additional permissions.
+Grant permissions to other users unless an explicitly scoped delegation feature is later authorized by Super Admin.
+Change their own role.
+Modify or remove Super Admin permissions.
+Access unassigned branches.
+Bypass permission checks by calling Firebase directly.
+
+Admin may manage only the Staff accounts and branches within their authorized scope.
+
+4.3 Staff
+
+Staff is the daily operational role, intended primarily for cashiers and shop employees.
+
+Default Staff permissions:
+
+Log in.
+Access the assigned branch POS.
+Search and select available products.
+Add products to the cart.
+Complete authorized sales.
+Record payment methods and permitted references.
+Print receipts.
+View the current transaction.
+View permitted order details needed for an operational task.
+
+By default, Staff must NOT be able to:
+
+View sales dashboards.
+View daily sales totals.
+View combined business sales.
+View sales reports.
+View revenue analytics.
+View profit or cost reports.
+View restricted financial summaries.
+Manage branches.
+Manage users.
+Change roles.
+Grant or revoke permissions.
+Change global or branch-specific prices.
+Access another branch.
+Approve refunds unless explicitly authorized.
+Export financial reports.
+
+Super Admin can grant or revoke additional Staff permissions where appropriate.
+
+Staff may receive permissions for tasks such as stock adjustments, permitted inventory viewing, or limited order-history access, but these must be explicit and restricted to the assigned branch.
+
+Do not grant Staff sales-report access by default.
+
+5. PERMISSION MATRIX
+
+Implement a centralized permission registry.
+
+Use stable permission identifiers such as:
+
+dashboard.view
+dashboard.view_sales
+sales.create
+sales.view_branch
+sales.view_all
+reports.sales.view
+reports.profit.view
+reports.expenses.view
+reports.export
+products.view
+products.create
+products.edit
+products.archive
+products.change_price
+categories.manage
+inventory.view
+inventory.adjust
+inventory.receive
+transfers.create
+transfers.dispatch
+transfers.receive
+transfers.approve
+orders.view
+orders.view_branch_history
+refunds.create
+refunds.approve
+expenses.view
+expenses.create
+expenses.edit
+branches.view
+branches.manage
+staff.view
+staff.create
+staff.edit
+staff.deactivate
+staff.assign_branch
+settings.view
+settings.manage
+audit_logs.view
+
+Use an explicit permission registry rather than scattering role-name comparisons throughout the application.
+
+Default access policy
+Capability	Super Admin	Admin	Staff
+Manage branches	Yes	Only if explicitly authorized	No by default
+Create Admin	Yes	No	No
+Create Staff	Yes	Yes, within assigned scope	No
+Manage permissions	Yes	No by default	No
+POS billing	Yes	If authorized	Yes
+View branch sales	Yes	Only if authorized	No
+View combined sales	Yes	Only if authorized	No
+View sales reports	Yes	Only if authorized	No
+View profit reports	Yes	Only if authorized	No
+Manage products	Yes	Only if authorized	No by default
+Change prices	Yes	Only if authorized	No
+Manage inventory	Yes	Only if authorized	No by default
+Manage refunds	Yes	Only if authorized	No by default
+Manage expenses	Yes	Only if authorized	No by default
+View audit logs	Yes	Only if explicitly authorized	No
+
+Super Admin has full application authority. The role defaults for Admin and Staff are governed by the configured permission policy.
+
+Permission evaluation
+
+Implement a central authorization service.
+
+A protected operation must check:
+
+The user is authenticated.
+The user account is active.
+The user's role is valid.
+The required permission is granted.
+The user is authorized for the requested branch.
+The requested data and operation are within the user's scope.
+
+For Super Admin, grant the highest application authority without requiring the Super Admin to individually enable every operational permission.
+
+For Admin and Staff, use explicit permission grants and branch assignments.
+
+Do not treat a missing permission as granted. Deny access by default.
+
+Do not use a generic wildcard in a way that accidentally grants Admin or Staff Super Admin authority.
+
+6. SUPER ADMIN PERMISSION MANAGEMENT PANEL
+
+Create a dedicated Permission Management page visible only to Super Admin.
+
+The page must allow Super Admin to select a user and configure their permissions.
+
+Display:
+
+User name.
+Email.
+Role.
+Assigned branches.
+Account status.
+Granted permissions.
+Revoked or ungranted permissions.
+Last permission change.
+Who last changed the permissions.
+
+Group permissions into sections:
+
+Dashboard.
+Sales.
+Sales Reports.
+Profit and Financial Reports.
+Products.
+Categories.
+Inventory.
+Stock Transfers.
+Orders.
+Refunds.
+Expenses.
+Branch Management.
+Staff Management.
+Settings.
+Data Export.
+Audit Logs.
+
+Use checkboxes or toggles for individual permissions.
+
+Include actions:
+
+Grant selected permissions.
+Revoke selected permissions.
+Save Changes.
+Cancel.
+View Permission History.
+
+Require confirmation before removing sensitive permissions or granting broad access.
+
+When Super Admin revokes a permission, it must no longer authorize protected reads or operations. Do not rely only on hiding a navigation item.
+
+The permission change should take effect on the next protected request, with no requirement to log out and log back in.
+
+If a protected screen is already open, refresh its data authorization and remove restricted content as soon as practical.
+
+If a permission is revoked during an active operation, the backend must recheck authorization before accepting that operation.
+
+Never cache privileged permissions indefinitely.
+
+7. STAFF AND ADMIN ACCOUNT MANAGEMENT
+
+Create a user-management interface.
+
+Super Admin can:
+
+Create Admin accounts.
+Create Staff accounts.
+Edit user details.
+Change branch assignments.
+Grant or revoke permissions.
+Deactivate accounts.
+Reactivate accounts.
+Review permission history.
+
+Admin can:
+
+Create Staff accounts.
+Edit permitted Staff details.
+Assign Staff to branches within the Admin's scope.
+Deactivate Staff within the Admin's scope.
+View permitted Staff activity.
+
+Admin cannot create or promote another Admin or Super Admin.
+
+Use Firebase Authentication for identity and a secure user profile document for application role and assignment metadata.
+
+Use a trusted administrative backend or secure account-invitation workflow when creating accounts for other users.
+
+Never store passwords in Firestore or send private credentials through insecure workflows.
+
+If an Admin's own permissions are revoked, that Admin must not be able to restore them.
+
+If an account is deactivated, deny subsequent protected operations even if the user still has an existing authentication session.
+
+8. MULTI-BRANCH BUSINESS MANAGEMENT
+
+Every branch must have:
+
+Unique branch ID.
+Branch name.
+Branch code.
+Address.
+Contact number.
+Optional branch manager.
+Active/inactive status.
+Opening date.
+Timezone.
+Branch-specific settings.
+Created timestamp.
+Updated timestamp.
+
+Super Admin can create and manage all branches.
+
+Admin can manage branches only if Super Admin grants the relevant permissions and scope.
+
+Staff cannot manage branches by default.
+
+Create a branch selector with:
+
+All Branches.
+Individual branches.
+
+All Branches is available only to users with the appropriate business-wide access.
+
+A cashier must automatically use their assigned branch.
+
+Every order, expense, inventory movement, refund, and transfer must have appropriate branch attribution.
+
+Prevent users from changing branch IDs in the browser to access unauthorized records.
+
+9. OWNER AND AUTHORIZED ADMIN DASHBOARD
+
+Create a dashboard that displays actual Firestore data.
+
+Super Admin can see consolidated data across all branches.
+
+An Admin can see branch sales, combined sales, or financial dashboards only when the corresponding permissions have been granted.
+
+Staff must not see sales dashboard cards or financial analytics by default.
+
+Dashboard metrics:
+
+Gross sales.
+Discounts.
+Refunds.
+Net sales.
+Completed order count.
+Average order value.
+Cash sales.
+Digital payment sales.
+Recorded expenses.
+Estimated gross profit.
+Estimated operating result.
+Best-selling products.
+Recent transactions.
+Branch comparisons.
+Low-stock alerts.
+
+Filters:
+
+Today.
+Yesterday.
+Last 7 days.
+Last 30 days.
+Current month.
+Custom date range.
+All Branches.
+Individual branch.
+
+The dashboard must respect both permission and branch scope.
+
+Do not expose restricted totals in hidden page elements, frontend state, API responses, or unrestricted Firestore queries.
+
+Use efficient indexed queries, pagination, and trusted aggregation strategies.
+
+10. POS BILLING
+
+Build a fast, touch-friendly POS.
+
+Initial editable product categories:
+
+Falooda.
+Milkshakes.
+Ice Cream.
+Juices.
+Cold Drinks.
+Snacks.
+Toppings.
+Other.
+
+Features:
+
+Product search.
+Category filters.
+Product cards.
+Product images or fallbacks.
+Variants such as Small, Medium, and Large.
+Add-ons such as extra ice cream, nuts, and syrup.
+Cart management.
+Quantity controls.
+Remove items.
+Optional customer information.
+Order notes.
+Subtotal.
+Discount.
+Tax if enabled.
+Final total.
+Payment method.
+Complete Sale.
+Print Receipt.
+New Sale.
+
+Every sale must be linked to exactly one authorized branch.
+
+Use the selected branch's product availability, effective prices, and inventory.
+
+Cashiers must be able to create sales without automatically gaining access to sales reports.
+
+The ability to create a sale is separate from the ability to view sales analytics.
+
+Validate prices, discounts, quantities, taxes, and totals using trusted logic where required.
+
+Prevent duplicate checkout submissions.
+
+Preserve the cart when checkout fails.
+
+Only report success after the order has been saved successfully.
+
+11. PRODUCT AND CATEGORY MANAGEMENT
+
+Products must support:
+
+Name.
+Description.
+Category.
+SKU.
+Image URL.
+Global default selling price.
+Cost price.
+Active status.
+Variants.
+Add-ons.
+Stock tracking.
+Created timestamp.
+Updated timestamp.
+
+Support branch-specific price overrides and availability.
+
+Allow authorized users to add, edit, archive, search, filter, and sort products.
+
+Super Admin can manage all products.
+
+Admin can manage products only with the relevant permissions.
+
+Staff cannot modify product prices or catalog records by default.
+
+Preserve historical sales snapshots when a product is edited or archived.
+
+Categories must support creation, editing, ordering, activation, and archiving.
+
+12. BRANCH INVENTORY
+
+Track stock separately for every branch.
+
+Support:
+
+Initial stock.
+Stock received.
+Stock adjustments.
+Low-stock alerts.
+Stock movement history.
+Branch inventory reports.
+Combined inventory reports for authorized users.
+
+A sale at one branch must never decrement another branch's stock.
+
+If stock tracking is enabled, prevent sales exceeding available stock.
+
+Use atomic or trusted server-side processing for concurrent stock changes.
+
+Stock adjustment permissions must be separate from ordinary POS billing permissions.
+
+Every adjustment must record:
+
+Branch.
+Product.
+Quantity change.
+Reason.
+Actor.
+Timestamp.
+Related order or transfer where applicable.
+13. STOCK TRANSFERS
+
+Implement an auditable stock-transfer workflow.
+
+Statuses:
+
+Draft.
+Dispatched.
+Received.
+Cancelled.
+
+Workflow:
+
+Select source branch.
+Select destination branch.
+Select products and quantities.
+Validate permissions and available stock.
+Create the transfer.
+Dispatch the transfer.
+Record the source stock deduction.
+Track goods in transit if supported.
+Confirm destination receipt.
+Update destination stock.
+Preserve the complete audit trail.
+
+Prevent duplicate dispatch and receipt operations.
+
+Prevent receiving more than the dispatched quantity.
+
+Require appropriate permissions for creating, dispatching, receiving, and approving transfers.
+
+14. ORDERS, REFUNDS, AND RECEIPTS
+
+Order history must include:
+
+Unique order ID.
+Receipt number.
+Branch ID.
+Cashier ID.
+Product snapshots.
+Variants and add-ons.
+Quantities.
+Unit prices.
+Subtotal.
+Discount.
+Tax.
+Total.
+Payment method.
+Payment status.
+Timestamp.
+Order status.
+
+Support search, date filtering, branch filtering, payment filtering, pagination, and receipt reprinting.
+
+Order-history access must be permission-controlled separately from sales-report access.
+
+Staff may access order details necessary for authorized operations without receiving access to aggregate sales analytics.
+
+Implement authorized full and partial refunds.
+
+Refunds must record the original order, branch, amount, reason, actor, status, and timestamp.
+
+Never silently delete completed orders.
+
+Receipts
+
+Print:
+
+Falooda Point.
+Branch name and contact details.
+Receipt number.
+Date and time.
+Cashier.
+Itemized products.
+Quantities.
+Unit prices.
+Discounts.
+Tax if applicable.
+Total.
+Payment method.
+Thank-you message.
+
+Support 58 mm and 80 mm thermal receipt layouts using browser printing.
+
+Reprinting must not create a new order.
+
+15. SALES REPORTS AND FINANCIAL PERMISSIONS
+
+Sales reporting is a protected capability.
+
+Implement separate permissions for:
+
+Viewing branch sales.
+Viewing all-branch sales.
+Viewing sales reports.
+Viewing profit reports.
+Viewing expenses.
+Exporting financial data.
+
+Super Admin can grant or revoke these permissions for Admin.
+
+Admin can see only the sales data explicitly permitted by Super Admin.
+
+Staff cannot view sales totals, sales dashboards, sales reports, or profit reports by default.
+
+Even when Staff has permission to create sales, that does not grant permission to read aggregate sales data.
+
+Reports should include:
+
+Daily sales.
+Weekly sales.
+Monthly sales.
+Custom-date sales.
+Branch comparison.
+Product-wise sales.
+Category-wise sales.
+Cashier activity.
+Payment breakdown.
+Discounts.
+Refunds.
+Expenses.
+Estimated profit.
+
+Use historical order prices rather than current product prices.
+
+Use consistent definitions of gross sales, net sales, refunds, expenses, and profit.
+
+Clearly identify incomplete cost information and estimated financial values.
+
+CSV exports must enforce the same permissions as the report screen.
+
+Do not expose financial data through downloadable files or alternative endpoints to users who lack access.
+
+16. EXPENSE MANAGEMENT
+
+Support branch-specific and shared business expenses.
+
+Expense fields:
+
+Description.
+Category.
+Amount.
+Date.
+Branch ID or explicit shared-business designation.
+Notes.
+Created by.
+Timestamp.
+
+Example categories:
+
+Ingredients.
+Packaging.
+Rent.
+Electricity.
+Equipment.
+Maintenance.
+Other.
+
+Implement permissions for viewing, creating, editing, and reporting expenses.
+
+Do not automatically give Staff expense access.
+
+Super Admin can grant or revoke expense permissions for Admin.
+
+Shared expenses must not be silently allocated to branches.
+
+If allocation is required, make the method explicit and configurable.
+
+Avoid double-counting inventory purchases and operating expenses.
+
+17. FIRESTORE DATA MODEL
+
+Inspect the existing schema before making changes.
+
+Use a documented schema with collections such as:
+
+users/{userId}
+displayName
+email
+role
+active
+assignedBranchIds or a scalable assignment structure
+permission overrides or a secure permission reference
+createdAt
+updatedAt
+branches/{branchId}
+name
+code
+address
+phone
+managerId
+status
+timezone
+settings
+createdAt
+updatedAt
+products/{productId}
+name
+description
+categoryId
+sku
+globalSellingPrice
+costPrice
+variants
+addOns
+active
+createdAt
+updatedAt
+branchProducts/{branchProductId}
+branchId
+productId
+priceOverride
+active
+stockTrackingEnabled
+stock configuration
+updatedAt
+categories/{categoryId}
+name
+description
+sortOrder
+active
+orders/{orderId}
+receiptNumber
+branchId
+cashierId
+status
+items
+subtotal
+discountAmount
+taxAmount
+totalAmount
+paymentMethod
+paymentStatus
+createdAt
+updatedAt
+inventoryMovements/{movementId}
+branchId
+productId
+quantityChange
+movementType
+reason
+actorId
+relatedOrderId
+relatedTransferId
+createdAt
+stockTransfers/{transferId}
+sourceBranchId
+destinationBranchId
+items
+status
+createdBy
+dispatchedBy
+receivedBy
+timestamps
+expenses/{expenseId}
+branchId or shared-business designation
+description
+category
+amount
+date
+createdBy
+timestamps
+refunds/{refundId}
+orderId
+branchId
+amount
+reason
+refundType
+status
+actorId
+createdAt
+permissionAuditLogs/{logId}
+targetUserId
+actorUserId
+action
+role
+permissionsChanged
+previousValues where safe
+newValues where safe
+timestamp
+reason
+auditLogs/{logId}
+actorId
+action
+entityType
+entityId
+branchId where relevant
+timestamp
+safe metadata
+
+Use a scalable structure and avoid duplicating authoritative values.
+
+Never expose password information or administrative secrets.
+
+18. SECURITY ARCHITECTURE
+
+Security is mandatory.
+
+Create:
+
+firestore.rules
+firestore.indexes.json
+A centralized permission registry.
+A centralized authorization service.
+Trusted backend logic where required.
+Security tests.
+
+Requirements:
+
+Deny access by default.
+Validate authentication.
+Validate account status.
+Enforce role hierarchy.
+Enforce individual permissions.
+Enforce branch assignments.
+Prevent self-promotion.
+Prevent self-granted permissions.
+Prevent Admin from creating Admin or Super Admin accounts.
+Prevent unauthorized reads of sales reports.
+Prevent unauthorized reads of financial data.
+Prevent unauthorized price changes.
+Prevent unauthorized refunds.
+Prevent unauthorized stock transfers.
+Prevent unauthorized permission changes.
+Protect audit logs.
+Critical rule for sales reports
+
+Do not assume that hiding the sales report screen protects its data.
+
+A Staff account without report permission must not be able to read the underlying sales aggregates or retrieve restricted financial data directly from Firestore or an endpoint.
+
+Enforce authorization at the data-access layer.
+
+Critical rule for permission changes
+
+Store permissions in a trusted, protected location.
+
+The application must re-evaluate current permissions for protected operations.
+
+Do not rely exclusively on long-lived custom claims for permissions that need to be revoked immediately, because authentication tokens can remain valid until refreshed.
+
+Use an appropriate trusted authorization check or another secure, revocation-aware mechanism.
+
+Firebase Admin SDK bypasses Firestore Security Rules. Protect trusted backend endpoints with their own authentication, authorization, input validation, and branch checks.
+
+Do not use open production rules.
+
+19. AUDIT LOGGING
+
+Record important security and business events:
+
+User created.
+User deactivated.
+Role changed.
+Permission granted.
+Permission revoked.
+Branch assignment changed.
+Product price changed.
+Refund approved.
+Stock adjusted.
+Stock transfer dispatched.
+Stock transfer received.
+Sensitive settings changed.
+
+Every permission change must record who performed it, which user was affected, what changed, and when.
+
+Audit logs must be append-only for normal application users.
+
+Admin and Staff must not be able to erase or rewrite their own audit history.
+
+Provide an audit-log viewer for Super Admin.
+
+Allow additional audit-log access only through an explicit permission.
+
+Avoid storing passwords, private keys, or unnecessary sensitive personal data in audit logs.
+
+20. FREE HOSTING AND DEPLOYMENT
+
+I want to begin with free hosting where possible.
+
+Prefer:
+
+Firebase Hosting within applicable plan limits.
+Firebase Authentication within applicable quotas.
+Cloud Firestore within applicable quotas.
+GitHub for version control.
+
+Explain the difference between publishing through Google AI Studio and deploying a static frontend to Firebase Hosting.
+
+If trusted backend functions are needed for security, permissions, checkout, or stock consistency, explain their cost implications before requiring a billing account.
+
+Do not enable paid billing without my explicit approval.
+
+Provide:
+
+firebase.json.
+firestore.rules.
+firestore.indexes.json.
+.env.example.
+README.md.
+Deployment instructions.
+Testing instructions.
+Backup recommendations.
+
+Do not assume the generated application is a standard Vite app without inspecting its actual configuration.
+
+Do not promise unlimited or permanently free hosting.
+
+21. TESTING AND ACCEPTANCE
+
+Test the following where supported.
+
+Role tests
+Super Admin can create Admin and Staff.
+Admin can create Staff only.
+Admin cannot create Admin or Super Admin.
+Staff cannot manage users.
+Admin cannot grant themselves permissions.
+Staff cannot grant themselves permissions.
+Super Admin can grant Admin sales-report permission.
+Super Admin can revoke Admin sales-report permission.
+Revoked permissions stop authorizing protected operations.
+The last active Super Admin cannot be accidentally removed.
+Data-access tests
+Staff cannot read sales reports by default.
+Staff cannot read restricted sales totals directly from Firestore.
+Admin without permission cannot read sales reports.
+Admin with permission can read only authorized branch reports.
+Users cannot access unassigned branches.
+Cashiers cannot switch to unauthorized branches.
+Unauthorized users cannot read restricted cost prices.
+CSV exports enforce the same permissions as the report screen.
+POS tests
+Product search works.
+Cart totals are correct.
+Discounts and taxes are validated.
+Checkout saves orders.
+Failed checkout does not lose the cart.
+Duplicate submissions do not create duplicate sales.
+Inventory changes occur correctly.
+Receipts print correctly.
+Reprinting does not create another order.
+Branch tests
+Sales remain separated by branch.
+Combined totals include each authorized order exactly once.
+Stock transfers cannot be processed twice.
+Branch comparisons use consistent date ranges.
+Expenses and refunds are attributed correctly.
+
+Do not claim a test passed unless it was actually run successfully.
+
+22. IMPLEMENTATION ORDER
+
+Implement the application incrementally.
+
+Stage 1: Inspect the current project and create the visual design system.
+
+Stage 2: Implement Firebase Authentication and protected routes.
+
+Stage 3: Implement the three roles and centralized permission system.
+
+Stage 4: Implement the Super Admin permission-management panel.
+
+Stage 5: Implement Admin and Staff account creation and branch assignments.
+
+Stage 6: Implement branch management and branch-aware product configuration.
+
+Stage 7: Implement POS, checkout, orders, and receipts.
+
+Stage 8: Implement branch inventory and stock transfers.
+
+Stage 9: Implement refunds, expenses, and reports.
+
+Stage 10: Implement the consolidated owner dashboard and branch comparisons.
+
+Stage 11: Implement security rules, audit logging, tests, and deployment documentation.
+
+Inspect the existing code before each change.
+
+Preserve existing data and features.
+
+Do not replace real data with mock data.
+
+If the complete application cannot be built reliably in one pass, finish the secure core first and continue with the remaining stages in the same project.
+
+23. FINAL ACCEPTANCE CRITERIA
+
+The application is complete when:
+
+Firebase authentication works.
+Super Admin, Admin, and Staff roles work.
+Super Admin can create Admin and Staff.
+Admin can create Staff only.
+Super Admin can grant and revoke individual permissions.
+Super Admin can grant and revoke Admin sales-report access.
+Staff cannot view sales dashboards or reports by default.
+Unauthorized sales data cannot be accessed directly from Firebase.
+Multi-branch management works.
+Every sale is associated with the correct branch.
+Branch inventory remains separate.
+POS billing and checkout work.
+Receipts can be printed and reprinted.
+Orders and refunds are auditable.
+Combined and individual branch sales work for authorized users.
+Expenses and financial reports respect permissions.
+Branch assignments are enforced by security rules and trusted logic.
+Permission changes are audited.
+Critical tests are run and their actual results documented.
+The project builds successfully.
+Hosting and backend costs are explained honestly.
+FIRST ACTION
+
+Inspect the current Google AI Studio project and identify its existing structure and Firebase configuration.
+
+Then implement the application using the soft pink and cream theme.
+
+Prioritize secure authentication, the three-role permission system, branch isolation, and the Super Admin permission-management panel.
+
+After that, implement POS billing, inventory, stock transfers, receipts, expenses, reports, and combined branch dashboards.
+
+Use real Firebase data.
+
+Do not stop at a static dashboard.
+
+Do not weaken security to avoid backend configuration.
+
+Ask for confirmation before irreversible data migrations or enabling paid billing.

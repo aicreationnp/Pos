@@ -1,0 +1,156 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedOwner() {
+      return isSignedIn() && request.auth.token.email == 'aicreation.np@gmail.com';
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isBootstrappedOwner() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        getUserData().role == 'super_admin' &&
+        getUserData().active == true
+      );
+    }
+
+    function isAuthorizedUser() {
+      return isBootstrappedOwner() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        getUserData().active == true
+      );
+    }
+
+    function hasPermission(perm) {
+      return isSuperAdmin() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        getUserData().active == true &&
+        ('permissions' in getUserData()) &&
+        getUserData().permissions.hasAny([perm])
+      );
+    }
+
+    // Users (Strictly guarded: No uninvited self-enrollment)
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSuperAdmin() || hasPermission('staff.create') || (
+        isBootstrappedOwner() && request.auth.uid == userId
+      ) || (
+        // Allow linking existing pre-enrolled account matching Google email
+        isSignedIn() && request.auth.uid == userId &&
+        request.resource.data.email == request.auth.token.email
+      );
+      allow update: if isSuperAdmin() || (
+        isSignedIn() && request.auth.uid == userId &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'permissions', 'active', 'assignedBranchIds'])
+      ) || (
+        hasPermission('staff.edit') &&
+        resource.data.role == 'staff' &&
+        request.resource.data.role == 'staff'
+      );
+      allow delete: if (isSuperAdmin() || hasPermission('staff.delete')) &&
+        resource.data.email != 'aicreation.np@gmail.com' &&
+        request.auth.uid != userId;
+    }
+
+    // Branches
+    match /branches/{branchId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isSuperAdmin() || hasPermission('branches.manage');
+      allow delete: if isSuperAdmin();
+    }
+
+    // Categories
+    match /categories/{categoryId} {
+      allow read: if isAuthorizedUser();
+      allow create, update, delete: if isSuperAdmin() || hasPermission('categories.manage');
+    }
+
+    // Products
+    match /products/{productId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isSuperAdmin() || hasPermission('products.create') || hasPermission('products.edit') || hasPermission('products.change_price');
+      allow delete: if isSuperAdmin() || hasPermission('products.archive');
+    }
+
+    // Branch Products (Inventory & Price Overrides)
+    match /branchProducts/{branchProductId} {
+      allow read, create, update: if isAuthorizedUser();
+      allow delete: if isSuperAdmin();
+    }
+
+    // Orders (POS Sales)
+    match /orders/{orderId} {
+      allow read, create: if isAuthorizedUser();
+      allow update: if isSuperAdmin() || hasPermission('refunds.approve');
+      allow delete: if false; // Immutable orders
+    }
+
+    // Inventory Movements (Audit Log of stock changes)
+    match /inventoryMovements/{movementId} {
+      allow read, create: if isAuthorizedUser();
+      allow update, delete: if false;
+    }
+
+    // Stock Transfers
+    match /stockTransfers/{transferId} {
+      allow read: if isSuperAdmin() || 
+        hasPermission('transfers.create') || 
+        hasPermission('transfers.dispatch') || 
+        hasPermission('transfers.receive');
+      allow create: if isSuperAdmin() || hasPermission('transfers.create');
+      allow update: if isSuperAdmin() || 
+        hasPermission('transfers.dispatch') || 
+        hasPermission('transfers.receive') ||
+        hasPermission('transfers.approve');
+      allow delete: if false;
+    }
+
+    // Expenses
+    match /expenses/{expenseId} {
+      allow read: if isSuperAdmin() || hasPermission('expenses.view') || hasPermission('reports.expenses.view');
+      allow create: if isSuperAdmin() || hasPermission('expenses.create');
+      allow update: if isSuperAdmin() || hasPermission('expenses.edit');
+      allow delete: if isSuperAdmin();
+    }
+
+    // Refunds
+    match /refunds/{refundId} {
+      allow read: if isSuperAdmin() || hasPermission('refunds.create') || hasPermission('refunds.approve');
+      allow create: if isSuperAdmin() || hasPermission('refunds.create');
+      allow update: if isSuperAdmin() || hasPermission('refunds.approve');
+      allow delete: if false;
+    }
+
+    // Audit Logs
+    match /auditLogs/{logId} {
+      allow read: if isSuperAdmin() || hasPermission('audit_logs.view');
+      allow create: if isAuthorizedUser();
+      allow update, delete: if false; // Append-only
+    }
+
+    // Permission Audit Logs
+    match /permissionAuditLogs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isSuperAdmin() || hasPermission('staff.edit') || hasPermission('staff.delete');
+      allow update, delete: if false; // Append-only
+    }
+  }
+}
